@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Uzair Ansari | IT Assistant & Lab Incharge | Professional Resume</title>
-    <meta name="description" content="Uzair Ansari - IT Assistant, Lab Incharge, Receptionist with 6+ years experience">
+    <meta name="description" content="Uzair Ansari - IT Assistant, Lab Incharge, Receptionist with 6+ years experience in hardware, software installation, inventory management">
     <meta name="author" content="Uzair Ansari">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         * {
@@ -34,7 +32,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
             line-height: 1.5;
             color: var(--dark);
             background: #eef2ff;
@@ -47,13 +45,16 @@
             padding: 40px 30px;
         }
 
-        /* Resume Card - Print Optimized */
+        /* Resume Card - Fixed Layout for Print/Word */
         .resume-card {
             background: var(--white);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             overflow: hidden;
             margin-bottom: 40px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Header Section */
@@ -306,7 +307,7 @@
             border-top: 1px solid #e2e8f0;
         }
 
-        /* Print Styles for PDF */
+        /* Fixed Print Styles - Ensures layout remains perfect */
         @media print {
             body {
                 background: white;
@@ -324,14 +325,17 @@
                 box-shadow: none;
                 margin: 0;
                 border-radius: 0;
+                max-width: 100%;
             }
             .resume-header {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+                background: #0f3b5c;
             }
             .exp-header {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+                background: #0f3b5c;
             }
             .section {
                 page-break-inside: avoid;
@@ -368,7 +372,7 @@
 <body>
 
 <div class="container">
-    <!-- Resume Card -->
+    <!-- Resume Card - Fixed Layout -->
     <div class="resume-card" id="resumeCard">
         <!-- Header -->
         <div class="resume-header">
@@ -493,136 +497,92 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Action Buttons - Only Word Download -->
     <div class="action-buttons no-print">
-            <button id="downloadWord" class="btn btn-secondary">
-            <i class="fas fa-file-word"></i> Download as Word
+        <button id="downloadWord" class="btn btn-secondary">
+            <i class="fas fa-file-word"></i> Download Resume (Word)
         </button>
     </div>
 
     <div class="footer-note no-print">
-        <i class="fas fa-print"></i> Professional Resume | Uzair Ansari | Updated 2025
+        <i class="fas fa-download"></i> Click the button above to download your professional resume in Microsoft Word format. The layout will remain fixed and professional.
     </div>
 </div>
 
 <script>
-    // PDF Download using html2canvas + jsPDF
-    document.getElementById('downloadPDF').addEventListener('click', async function() {
-        const button = this;
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
-        button.disabled = true;
-
-        try {
-            const element = document.getElementById('resumeCard');
-            
-            // Set temporary print styles for better capture
-            const originalOverflow = document.body.style.overflow;
-            document.body.style.overflow = 'hidden';
-            
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight
-            });
-            
-            document.body.style.overflow = originalOverflow;
-            
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            
-            // Calculate dimensions to fit A4
-            const imgWidth = 210; // A4 width in mm
-            const pageHeight = 297; // A4 height in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            let pdf = new jsPDF('p', 'mm', 'a4');
-            let position = 0;
-            
-            if (imgHeight <= pageHeight) {
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            } else {
-                let heightLeft = imgHeight;
-                let currentPosition = 0;
-                let pageNum = 1;
-                
-                while (heightLeft > 0) {
-                    if (pageNum > 1) {
-                        pdf.addPage();
-                    }
-                    pdf.addImage(imgData, 'PNG', 0, currentPosition, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                    currentPosition -= pageHeight;
-                    pageNum++;
-                }
-            }
-            
-            pdf.save('Uzair_Ansari_Resume.pdf');
-        } catch (error) {
-            console.error('PDF Error:', error);
-            alert('Error generating PDF. Using browser print as fallback...');
-            window.print();
-        } finally {
-            button.innerHTML = originalText;
-            button.disabled = false;
-        }
-    });
-
-    // Word Download - Creates proper formatted DOC file
+    // Word Download - Creates proper formatted DOC file with fixed layout
     document.getElementById('downloadWord').addEventListener('click', function() {
         const button = this;
         const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Word...';
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Word File...';
         button.disabled = true;
 
         try {
-            // Get the resume HTML content
-            const resumeHTML = document.getElementById('resumeCard').cloneNode(true);
+            // Get the resume HTML content and clone it
+            const resumeElement = document.getElementById('resumeCard');
+            const resumeClone = resumeElement.cloneNode(true);
             
-            // Create full HTML document for Word
+            // Remove any unwanted elements
+            const unwanted = resumeClone.querySelectorAll('.action-buttons, .no-print, .btn');
+            unwanted.forEach(el => el.remove());
+            
+            // Get the HTML content
+            const resumeHTML = resumeClone.outerHTML;
+            
+            // Create complete HTML document for Word with fixed layout
             const docHTML = `<!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
                 <title>Uzair Ansari - Professional Resume</title>
                 <style>
+                    /* Reset and Base Styles - Fixed Layout */
                     * {
                         margin: 0;
                         padding: 0;
                         box-sizing: border-box;
                     }
+                    
                     body {
-                        font-family: 'Segoe UI', Arial, sans-serif;
+                        font-family: 'Segoe UI', Arial, 'Helvetica Neue', sans-serif;
                         line-height: 1.4;
                         color: #1e293b;
                         background: white;
                         padding: 40px;
+                        margin: 0;
                     }
-                    .resume {
+                    
+                    .resume-card {
                         max-width: 1100px;
                         margin: 0 auto;
-                        background: white;
+                        background: #ffffff;
                         border: 1px solid #e2e8f0;
                         box-shadow: none;
+                        overflow: hidden;
                     }
-                    .header {
+                    
+                    /* Header */
+                    .resume-header {
                         background: #0f3b5c;
-                        padding: 30px 35px;
+                        padding: 35px 40px;
                         color: white;
                     }
-                    .header h1 {
+                    
+                    .resume-header h1 {
                         font-size: 28px;
-                        margin-bottom: 6px;
+                        font-weight: 700;
+                        letter-spacing: -0.5px;
+                        margin-bottom: 8px;
                     }
-                    .header .title {
+                    
+                    .resume-header .title {
                         font-size: 14px;
+                        opacity: 0.9;
                         margin-bottom: 18px;
                         border-left: 3px solid #e67e22;
-                        padding-left: 12px;
+                        padding-left: 15px;
                     }
+                    
                     .contact-bar {
                         display: flex;
                         flex-wrap: wrap;
@@ -632,13 +592,31 @@
                         border-top: 1px solid rgba(255,255,255,0.2);
                         font-size: 12px;
                     }
-                    .body {
-                        padding: 30px 35px;
+                    
+                    .contact-bar div {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
                     }
+                    
+                    .contact-bar i {
+                        width: 16px;
+                        color: #e67e22;
+                    }
+                    
+                    /* Body */
+                    .resume-body {
+                        padding: 35px 40px;
+                    }
+                    
                     .section {
                         margin-bottom: 25px;
                     }
+                    
                     .section-title {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
                         font-size: 18px;
                         font-weight: 700;
                         color: #0f3b5c;
@@ -646,94 +624,166 @@
                         padding-bottom: 6px;
                         margin-bottom: 12px;
                     }
+                    
+                    .section-title i {
+                        color: #e67e22;
+                        font-size: 16px;
+                    }
+                    
                     .objective-text {
                         background: #f8fafc;
                         padding: 14px 18px;
+                        border-radius: 8px;
                         border-left: 4px solid #e67e22;
                         font-size: 13px;
+                        color: #475569;
                     }
+                    
                     .info-grid {
                         display: grid;
                         grid-template-columns: repeat(2, 1fr);
                         gap: 15px;
                     }
+                    
                     .info-card {
                         background: #f8fafc;
                         padding: 12px 15px;
+                        border-radius: 8px;
                     }
+                    
                     .info-card h3 {
                         color: #0f3b5c;
                         font-size: 14px;
                         margin-bottom: 6px;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
                     }
+                    
+                    .info-card h3 i {
+                        color: #e67e22;
+                        font-size: 12px;
+                    }
+                    
+                    .info-card p {
+                        color: #64748b;
+                        font-size: 12px;
+                    }
+                    
                     .skill-tags {
                         display: flex;
                         flex-wrap: wrap;
                         gap: 8px;
                         margin-top: 8px;
                     }
+                    
                     .skill-tag {
-                        background: #f1f5f9;
+                        background: #ffffff;
                         padding: 4px 12px;
                         border-radius: 30px;
                         font-size: 11px;
+                        font-weight: 500;
+                        color: #0f3b5c;
                         border: 1px solid #e2e8f0;
                     }
+                    
+                    .experience-list {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+                    
                     .exp-card {
                         background: #f8fafc;
-                        margin-bottom: 15px;
+                        border-radius: 8px;
+                        overflow: hidden;
                     }
+                    
                     .exp-header {
                         background: #0f3b5c;
                         color: white;
                         padding: 10px 16px;
                         display: flex;
                         justify-content: space-between;
+                        align-items: center;
                         flex-wrap: wrap;
+                        gap: 6px;
                     }
+                    
                     .exp-header h3 {
-                        font-size: 14px;
+                        font-size: 13px;
+                        font-weight: 600;
                     }
+                    
                     .exp-duration {
                         background: rgba(255,255,255,0.2);
                         padding: 2px 10px;
                         border-radius: 30px;
-                        font-size: 11px;
+                        font-size: 10px;
                     }
+                    
                     .exp-body {
                         padding: 12px 16px;
                     }
-                    .designation {
-                        font-weight: 700;
+                    
+                    .exp-body .designation {
+                        font-weight: 600;
                         color: #e67e22;
                         margin-bottom: 8px;
-                        font-size: 13px;
+                        font-size: 12px;
                     }
+                    
                     .exp-body ul {
                         list-style: none;
                     }
+                    
                     .exp-body li {
                         padding: 4px 0;
                         display: flex;
-                        gap: 10px;
-                        font-size: 12px;
+                        align-items: flex-start;
+                        gap: 8px;
+                        font-size: 11px;
+                        color: #64748b;
                         border-bottom: 1px solid #e2e8f0;
                     }
-                    .footer-note {
-                        text-align: center;
-                        margin-top: 20px;
-                        padding-top: 12px;
-                        border-top: 1px solid #e2e8f0;
+                    
+                    .exp-body li:last-child {
+                        border-bottom: none;
+                    }
+                    
+                    .exp-body li i {
+                        color: #e67e22;
+                        width: 14px;
                         font-size: 10px;
-                        color: #64748b;
+                        margin-top: 2px;
+                    }
+                    
+                    /* Page Break Control */
+                    .section {
+                        page-break-inside: avoid;
+                    }
+                    .exp-card {
+                        page-break-inside: avoid;
+                    }
+                    
+                    @media print {
+                        body {
+                            padding: 0;
+                            margin: 0;
+                        }
+                        .resume-header, .exp-header {
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
                     }
                 </style>
             </head>
             <body>
-                ${resumeHTML.outerHTML}
+                ${resumeClone.outerHTML}
             </body>
             </html>`;
             
+            // Create and download the Word file
             const blob = new Blob([docHTML], { type: 'application/msword' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
@@ -743,10 +793,17 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+            
+            // Show success message
+            button.innerHTML = '<i class="fas fa-check-circle"></i> Downloaded Successfully!';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 2000);
+            
         } catch (error) {
             console.error('Word Error:', error);
             alert('Error generating Word file. Please try again.');
-        } finally {
             button.innerHTML = originalText;
             button.disabled = false;
         }
